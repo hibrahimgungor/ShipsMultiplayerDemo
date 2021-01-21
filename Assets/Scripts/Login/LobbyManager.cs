@@ -27,7 +27,7 @@ namespace ShipsMultiplayerDemo
             {
                 connectionStatus.text = $"{newPlayer.NickName} connected room. Room is full.Game will start after 5 seconds.";
                 PhotonNetwork.CurrentRoom.IsVisible = false;
-                Invoke("LoadGameScene", 0.1f);
+                Invoke("LoadGameScene", 5f);
             }
         }
 
