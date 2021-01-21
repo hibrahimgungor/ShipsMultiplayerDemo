@@ -960,7 +960,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementSpeed: 5
   target: {x: 0, y: 0, z: 0}
-  shootDistance: 15
+  shootDistance: 20
 --- !u!114 &8402828294718010458
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -977,7 +977,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 7598798209751870834, guid: 1399ee0cf7df43f4eacff55c30f04f85,
     type: 3}
   shootPoint: {fileID: 5649354288046683766}
-  fireRate: 2.5
+  fireRate: 2
 --- !u!114 &1918958002144164586
 MonoBehaviour:
   m_ObjectHideFlags: 0
