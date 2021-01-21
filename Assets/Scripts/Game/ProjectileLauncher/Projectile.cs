@@ -22,10 +22,12 @@ namespace ShipsMultiplayerDemoV2
         private Vector3 movementDirection;
 
         private Rigidbody rigidBody;
+        private PhotonView photonView;
 
-        void Start()
+        void Awake()
         {
             rigidBody = GetComponent<Rigidbody>();
+            photonView = GetComponent<PhotonView>();
         }
 
         void FixedUpdate()
@@ -37,14 +39,15 @@ namespace ShipsMultiplayerDemoV2
 
         private void OnTriggerEnter(Collider other)
         {
+
             IDamageable isDamageble = other.GetComponent<IDamageable>();
             Debug.Log("isdamagable" + isDamageble);
             if (isDamageble != null)//Çarpışılan nesne hasar alabilen bir obje ise
             {
-                bool isMineObject = other.GetComponent<PhotonView>().IsMine;//Mermi kime ait
-                Debug.Log("Vurulan obje benim mi?:" + isMineObject);
-                if (!isMineObject)//Mermi benim değilse
+                int isMineObject = other.GetComponent<PhotonView>().CreatorActorNr;//Mermi kime ait
+                if (isMineObject != photonView.CreatorActorNr )//Mermi benim değilse
                 {
+                    Debug.Log("Take damage öncesi");
                     isDamageble.TakeDamage(damageAmount);
                     Debug.Log("Hasar Verildi");
                     PhotonNetwork.Destroy(this.gameObject);
@@ -52,7 +55,12 @@ namespace ShipsMultiplayerDemoV2
             }
             else
             {
-                PhotonNetwork.Destroy(this.gameObject);
+                if (other.tag =="StaticObject")
+                {
+                    PhotonNetwork.Destroy(this.gameObject);
+                }
+                
+
             }
 
         }
@@ -74,9 +82,9 @@ namespace ShipsMultiplayerDemoV2
         /// <param name="pos1">Birinci pozisyon</param>
         /// <param name="pos2">İkinci pozisyon</param>
         /// <returns></returns>
-        public void CalcuteDirection(Transform pos1, Transform pos2)
+        public void CalcuteDirection(Vector3 pos1, Vector3 pos2)
         {
-            movementDirection = Vector3.Normalize(pos2.position - pos1.position);
+            movementDirection = Vector3.Normalize(pos2 - pos1);
         }
 
 

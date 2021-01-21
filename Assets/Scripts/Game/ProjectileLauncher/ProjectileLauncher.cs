@@ -7,6 +7,11 @@ namespace ShipsMultiplayerDemoV2
 {
     public class ProjectileLauncher : MonoBehaviour
     {
+
+        [Tooltip("Yapay zeka tarafından kontrol edilecekse işaretlenmelidir.")]
+        [SerializeField]
+        private bool isAI;
+
         [Tooltip("Atış için üretilecek mermi Prefabi")]
         [SerializeField]
         private GameObject projectilePrefab;
@@ -22,7 +27,7 @@ namespace ShipsMultiplayerDemoV2
         //Ateş edil
         private float firedTime;
 
-     
+
         private InputManager inputManager;
         private PhotonView photonView;
 
@@ -34,11 +39,11 @@ namespace ShipsMultiplayerDemoV2
 
         void Start()
         {
-            if (photonView.IsMine)
+            if (photonView.IsMine && !isAI)
             {
                 inputManager.OnFireButtonClickedEvents += Fire;
             }
-            
+
         }
 
 
@@ -46,10 +51,20 @@ namespace ShipsMultiplayerDemoV2
         /// <summary>
         /// FireRPC fonksiyonunu çalıştırır. Tüm serverdaki oyunculara ateş edildiği bilgisini yollar.
         /// </summary>
-        private void Fire()
+        public void Fire()
         {
-           // Debug.Log("Fire");
+            // Debug.Log("Fire");
             photonView.RPC("FireRPC", RpcTarget.All);
+        }
+
+        public void Fire(Vector3 target)
+        {
+            
+            if (Time.time - firedTime > fireRate)
+            {
+                firedTime = Time.time;
+                photonView.RPC("FireTargetRPC", RpcTarget.All, target);
+            }
         }
 
         /// <summary>
@@ -60,16 +75,46 @@ namespace ShipsMultiplayerDemoV2
         {
             if (photonView.IsMine)
             {
-               // Debug.Log("FireRPC");
+                // Debug.Log("FireRPC");
                 if (Time.time - firedTime > fireRate)
                 {
                     firedTime = Time.time;
-                    GameObject projectile = PhotonNetwork.Instantiate(projectilePrefab.name, shootPoint.position, Quaternion.identity);
-                    projectile.GetComponent<Projectile>().CalcuteDirection(this.transform, shootPoint);
+                    GameObject projectile = PhotonNetwork.Instantiate(projectilePrefab.name, this.transform.position/*shootPoint.position*/, Quaternion.identity);
+                    projectile.GetComponent<Projectile>().CalcuteDirection(this.transform.position, shootPoint.position);
                 }
             }
-            
+
 
         }
+
+        /// <summary>
+        /// Oyuncu ateş etmek istiyor. Bu istek kendisinden geldiyse ve belirlenen atış sıklığı süresi aşıldıysa mermi üretilir.
+        /// </summary>
+        [PunRPC]
+        private void FireTargetRPC(Vector3 target)
+        {
+            if (photonView.IsMine)
+            {
+                Debug.Log("FireTargetRPC");
+               
+                    
+                    GameObject projectile = PhotonNetwork.Instantiate(projectilePrefab.name, this.transform.position, Quaternion.identity);
+                    projectile.GetComponent<Projectile>().CalcuteDirection(this.transform.position, target);
+                
+            }
+
+
+        }
+
+
+        //Ana gemi yok olduğunda ateş butonu event içerisinden çıkarılır.
+        private void OnDestroy()
+        {
+            if (isAI)
+            {
+                inputManager.OnFireButtonClickedEvents -= Fire;
+            }
+        }
+
     }
 }

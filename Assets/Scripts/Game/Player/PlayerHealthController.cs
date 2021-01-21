@@ -10,8 +10,10 @@ namespace ShipsMultiplayerDemoV2
 {
     public class PlayerHealthController : HealthController
     {
+        [Tooltip("Helth Bar Slider")]
         [SerializeField]
         private TMP_Text healthUI;
+
 
         private void Update()
         {
@@ -21,8 +23,9 @@ namespace ShipsMultiplayerDemoV2
         protected override void Die()
         {
             Debug.Log("Kaybettim");
-            PhotonNetwork.Disconnect();
             PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
+            PhotonNetwork.Disconnect();
+            
         }
     }
 }

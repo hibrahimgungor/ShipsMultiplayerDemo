@@ -8,7 +8,7 @@ using Photon.Pun;
 namespace ShipsMultiplayerDemoV2
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class BattleshipMovement : MonoBehaviour
+    public class MainShipMovement : MonoBehaviour
     {
         /// <summary>
         /// Objenin hareket hızı
@@ -49,7 +49,8 @@ namespace ShipsMultiplayerDemoV2
             if (photonvView.IsMine)
             {
                 Vector3 verticalVelocity = new Vector3(rigidBody.velocity.x, 0, verticalInput * speed);
-                rigidBody.velocity = verticalVelocity;
+               rigidBody.velocity = verticalVelocity;
+                //rigidBody.MovePosition(transform.position + verticalVelocity * Time.fixedDeltaTime);
             }
         }
 

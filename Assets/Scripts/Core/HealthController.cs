@@ -10,7 +10,7 @@ namespace ShipsMultiplayerDemoV2
     {
         [Tooltip("Oyuncunun sahip olabileceği maksimum can puanı")]
         [SerializeField]
-        private int maxHealth = 100;
+        protected int maxHealth = 100;
 
         private int _health;
         private bool isDead;
